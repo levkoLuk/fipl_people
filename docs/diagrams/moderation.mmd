@@ -1,0 +1,75 @@
+%% FIPLPEOPLE.RU — ER-диаграмма приложения moderation
+%% История модерации, жалобы и обращения администрации.
+%% Источник истины: apps/moderation/models.py и миграции moderation/0001, moderation/0002.
+%% verify: complete
+erDiagram
+    direction LR
+
+    MODERATION_EVENT["moderation_moderationevent · событие модерации"]:::moderation {
+        bigint id PK "первичный ключ"
+        bigint moderator_id FK "принявший решение модератор"
+        bigint article_version_id FK "null: объект - редакция статьи"
+        bigint comment_id FK "null: объект - комментарий"
+        varchar(32) action "approve, reject, hide, return_for_revision"
+        text reason "причина или комментарий"
+        timestamptz created_at
+    }
+
+    REPORT["moderation_report · жалоба"]:::moderation {
+        bigint id PK "первичный ключ"
+        bigint reporter_id FK "заявитель"
+        bigint article_id FK "null: жалоба на статью"
+        bigint comment_id FK "null: жалоба на комментарий"
+        varchar(32) reason "spam, copyright, inappropriate, wrong_category, other"
+        text description "подробности"
+        varchar(16) status "new, in_review, resolved, rejected"
+        bigint assigned_to_id FK "null: назначенный исполнитель"
+        timestamptz created_at
+        timestamptz resolved_at "null: дата решения"
+    }
+
+    FEEDBACK_MESSAGE["moderation_feedbackmessage · обращение"]:::moderation {
+        bigint id PK "первичный ключ"
+        bigint user_id FK "автор обращения"
+        varchar(255) subject "тема"
+        text message "текст обращения"
+        varchar(16) status "new, in_progress, answered, closed"
+        bigint assigned_to_id FK "null: ответственный администратор"
+        text response "ответ администрации"
+        timestamptz created_at
+        timestamptz answered_at "null: дата ответа; обязательна для answered"
+    }
+
+    USER["accounts_user · пользователь"]:::external {
+        bigint id PK "внешняя сущность приложения accounts"
+        varchar(254) email UK
+    }
+
+    ARTICLE["content_article · статья"]:::external {
+        bigint id PK "внешняя сущность приложения content"
+    }
+
+    ARTICLE_VERSION["content_articleversion · редакция статьи"]:::external {
+        bigint id PK "внешняя сущность приложения content"
+        integer version_number
+        varchar(16) status
+    }
+
+    COMMENT["content_comment · комментарий"]:::external {
+        bigint id PK "внешняя сущность приложения content"
+        text content
+        varchar(16) status
+    }
+
+    USER ||--o{ MODERATION_EVENT : "модерирует"
+    USER ||--o{ REPORT : "подаёт жалобу"
+    USER |o--o{ REPORT : "назначается исполнителем"
+    USER ||--o{ FEEDBACK_MESSAGE : "обращается"
+    USER |o--o{ FEEDBACK_MESSAGE : "отвечает"
+    ARTICLE_VERSION ||--o{ MODERATION_EVENT : "проходит проверку"
+    COMMENT ||--o{ MODERATION_EVENT : "проходит проверку"
+    ARTICLE ||--o{ REPORT : "получает жалобы"
+    COMMENT ||--o{ REPORT : "получает жалобы"
+
+    classDef moderation fill:#fde8e8,stroke:#b04a4a,stroke-width:1.5px,color:#1f2933
+    classDef external fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1.5px,stroke-dasharray:4 3,color:#616161

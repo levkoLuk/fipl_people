@@ -1,0 +1,83 @@
+﻿%% FIPLPEOPLE.RU — ER-диаграмма приложения content
+%% Статьи, редакции, вложения и комментарии.
+%% Источник истины: apps/content/models.py и миграции content/0001, content/0002.
+%% verify: complete
+erDiagram
+    direction LR
+
+    ARTICLE["content_article · статья"]:::content {
+        bigint id PK "первичный ключ"
+        bigint author_id FK "автор материала; удаление запрещено (PROTECT)"
+        timestamptz created_at
+        timestamptz updated_at "обновляется при публикации редакции"
+        timestamptz deleted_at "null: мягкое удаление"
+    }
+
+    ARTICLE_VERSION["content_articleversion · редакция статьи"]:::content {
+        bigint id PK "первичный ключ"
+        bigint article_id FK "статья-владелец"
+        integer version_number "номер редакции; CHECK: >= 1; UNIQUE с article_id"
+        bigint semester_discipline_id FK "семестр и дисциплина"
+        bigint material_type_id FK "тип материала"
+        varchar(300) title "название материала"
+        text content "текст материала"
+        varchar(16) status "draft, pending, published, rejected, archived"
+        bigint created_by_id FK "автор редакции"
+        timestamptz created_at
+        timestamptz submitted_at "null: отправлена на проверку"
+        bigint reviewed_by_id FK "null: проверивший модератор"
+        timestamptz reviewed_at "null: дата проверки"
+        text review_comment "причина отклонения или возврата"
+        timestamptz published_at "null: дата публикации; обязательна для published"
+    }
+
+    FILE_ATTACHMENT["content_fileattachment · вложение"]:::content {
+        bigint id PK "первичный ключ"
+        bigint version_id FK "редакция-владелец"
+        bigint uploaded_by_id FK "загрузивший пользователь"
+        varchar(255) original_name "исходное имя файла"
+        varchar(500) file "путь в файловом хранилище"
+        varchar(255) mime_type "MIME-тип, определяется при сохранении"
+        bigint size_bytes "размер; ограничен MAX_ATTACHMENT_SIZE_BYTES"
+        timestamptz created_at
+    }
+
+    COMMENT["content_comment · комментарий"]:::content {
+        bigint id PK "первичный ключ"
+        bigint article_id FK "статья"
+        bigint author_id FK "автор комментария"
+        bigint parent_id FK "null: ответ на другой комментарий"
+        text content "текст"
+        varchar(16) status "pending, published, rejected, hidden"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    USER["accounts_user · пользователь"]:::external {
+        bigint id PK "внешняя сущность приложения accounts"
+        varchar(254) email UK
+    }
+
+    SEMESTER_DISCIPLINE["catalog_semesterdiscipline · дисциплина семестра"]:::external {
+        bigint id PK "внешняя сущность приложения catalog"
+    }
+
+    MATERIAL_TYPE["catalog_materialtype · тип материала"]:::external {
+        bigint id PK "внешняя сущность приложения catalog"
+        varchar(100) name UK
+    }
+
+    USER ||--o{ ARTICLE : "создаёт"
+    USER ||--o{ ARTICLE_VERSION : "создаёт редакцию"
+    USER |o--o{ ARTICLE_VERSION : "проверяет"
+    USER ||--o{ FILE_ATTACHMENT : "загружает"
+    USER ||--o{ COMMENT : "пишет"
+    SEMESTER_DISCIPLINE ||--o{ ARTICLE_VERSION : "каталогизирует"
+    MATERIAL_TYPE ||--o{ ARTICLE_VERSION : "типизирует"
+    ARTICLE ||--|{ ARTICLE_VERSION : "состоит из редакций"
+    ARTICLE_VERSION ||--o{ FILE_ATTACHMENT : "содержит файлы"
+    ARTICLE ||--o{ COMMENT : "обсуждается в"
+    COMMENT |o--o{ COMMENT : "имеет ответы"
+
+    classDef content fill:#fff4e5,stroke:#b5762a,stroke-width:2px,color:#1f2933
+    classDef external fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px,stroke-dasharray:4 3,color:#616161

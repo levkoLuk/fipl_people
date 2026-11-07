@@ -1,0 +1,39 @@
+%% FIPLPEOPLE.RU — ER-диаграмма приложения notifications
+%% Уведомления пользователей и журнал действий персонала.
+%% Источник истины: apps/notifications/models.py и миграция notifications/0001.
+%% verify: complete
+erDiagram
+    direction LR
+
+    NOTIFICATION["notifications_notification · уведомление"]:::notifications {
+        bigint id PK "первичный ключ"
+        bigint user_id FK "получатель"
+        varchar(32) type "article_published, article_rejected, comment_published, feedback_answered, system и др."
+        varchar(255) title "заголовок"
+        text message "текст уведомления"
+        varchar(500) link "ссылка на материал или раздел"
+        boolean is_read "признак прочтения"
+        timestamptz created_at
+        timestamptz read_at "null: дата прочтения; обязательна при is_read"
+    }
+
+    AUDIT_LOG["notifications_auditlog · запись журнала"]:::notifications {
+        bigint id PK "первичный ключ"
+        bigint actor_id FK "null: автор действия, пусто для системы"
+        varchar(32) action "role_changed, user_blocked, catalog_changed, moderation_action, settings_changed, other"
+        varchar(100) object_type "метка модели, например content.articleversion"
+        varchar(64) object_id "идентификатор объекта строкой"
+        jsonb details "произвольные подробности"
+        timestamptz created_at
+    }
+
+    USER["accounts_user · пользователь"]:::external {
+        bigint id PK "внешняя сущность приложения accounts"
+        varchar(254) email UK
+    }
+
+    USER ||--o{ NOTIFICATION : "получает уведомления"
+    USER |o--o{ AUDIT_LOG : "совершает действия"
+
+    classDef notifications fill:#f1ecfd,stroke:#6a4fb5,stroke-width:1.5px,color:#1f2933
+    classDef external fill:#f5f5f5,stroke:#9e9e9e,stroke-width:1.5px,stroke-dasharray:4 3,color:#616161

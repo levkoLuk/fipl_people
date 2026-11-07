@@ -1,0 +1,56 @@
+﻿%% FIPLPEOPLE.RU — ER-диаграмма приложения accounts
+%% Пользователи, внешние аккаунты, профили и ссылки профиля.
+%% Источник истины: apps/accounts/models.py и миграции accounts/0001, accounts/0002.
+%% verify: complete
+erDiagram
+    direction LR
+
+    USER["accounts_user · пользователь сообщества"]:::accounts {
+        bigint id PK "первичный ключ"
+        varchar(254) email UK "логин; хранится в нижнем регистре"
+        varchar(128) password "хеш; у доменных пользователей непригоден"
+        boolean is_active "блокировка без удаления данных"
+        boolean is_staff "доступ в Django Admin"
+        boolean is_superuser "полные права; выдаёт только суперпользователь"
+        varchar(150) first_name
+        varchar(150) last_name
+        timestamptz date_joined "дата регистрации"
+        timestamptz last_login "null: дата последнего входа"
+        m2m groups "M2M: auth_group (роли USER, MODERATOR, ADMIN)"
+        m2m user_permissions "M2M: auth_permission"
+    }
+
+    EXTERNAL_ACCOUNT["accounts_externalaccount · внешний аккаунт"]:::accounts {
+        bigint id PK "первичный ключ"
+        bigint user_id FK "владелец локальной учётной записи"
+        varchar(32) provider "провайдер авторизации: google"
+        varchar(255) provider_uid "идентификатор sub у провайдера"
+        boolean email_verified "признак подтверждённого email"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    PROFILE["accounts_profile · публичный профиль"]:::accounts {
+        bigint id PK "первичный ключ"
+        bigint user_id FK, UK "один профиль на пользователя"
+        varchar(150) display_name "имя, видимое другим участникам"
+        text bio "описание о себе"
+        varchar(255) avatar "путь к файлу в хранилище"
+        boolean is_public "показывать в разделе Люди"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    PROFILE_LINK["accounts_profilelink · ссылка профиля"]:::accounts {
+        bigint id PK "первичный ключ"
+        bigint profile_id FK "профиль-владелец"
+        varchar(150) title "подпись ссылки"
+        varchar(500) url "адрес"
+        boolean is_public "видимость конкретной ссылки"
+    }
+
+    USER ||--o| PROFILE : "имеет ровно один профиль"
+    USER ||--o{ EXTERNAL_ACCOUNT : "входит через провайдера"
+    PROFILE ||--o{ PROFILE_LINK : "содержит ссылки"
+
+    classDef accounts fill:#e8f0fe,stroke:#4a6fb5,stroke-width:2px,color:#1f2933

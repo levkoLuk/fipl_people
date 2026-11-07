@@ -1,0 +1,187 @@
+%% FIPLPEOPLE.RU — общая ER-диаграмма прикладной базы данных
+%% 17 моделей пяти приложений: accounts, catalog, content, moderation, notifications.
+%% Источник истины: Django-модели и миграции; сверка выполняется командой
+%%   python tools/verify_diagrams.py
+erDiagram
+    direction LR
+
+    USER["accounts_user · пользователь"]:::accounts {
+        bigint id PK "первичный ключ"
+        varchar(254) email UK "уникальный логин"
+        boolean is_active
+        boolean is_staff
+        boolean is_superuser
+        timestamptz date_joined
+        timestamptz last_login "null: последний вход"
+        m2m groups "M2M: auth_group (роли)"
+    }
+
+    EXTERNAL_ACCOUNT["accounts_externalaccount · внешний аккаунт"]:::accounts {
+        bigint id PK
+        bigint user_id FK "владелец"
+        varchar(32) provider "google"
+        varchar(255) provider_uid "sub провайдера"
+        boolean email_verified "email подтверждён"
+    }
+
+    PROFILE["accounts_profile · профиль"]:::accounts {
+        bigint id PK
+        bigint user_id FK, UK "один профиль на пользователя"
+        varchar(150) display_name
+        boolean is_public
+    }
+
+    PROFILE_LINK["accounts_profilelink · ссылка профиля"]:::accounts {
+        bigint id PK
+        bigint profile_id FK
+        varchar(150) title
+        varchar(500) url
+        boolean is_public
+    }
+
+    SEMESTER["catalog_semester · семестр"]:::catalog {
+        bigint id PK
+        smallint number UK "номер семестра"
+        varchar(100) name
+        boolean is_active
+    }
+
+    DISCIPLINE["catalog_discipline · дисциплина"]:::catalog {
+        bigint id PK
+        varchar(255) name
+        varchar(255) slug UK
+        boolean is_active
+    }
+
+    SEMESTER_DISCIPLINE["catalog_semesterdiscipline · дисциплина семестра"]:::catalog {
+        bigint id PK
+        bigint semester_id FK
+        bigint discipline_id FK
+    }
+
+    MATERIAL_TYPE["catalog_materialtype · тип материала"]:::catalog {
+        bigint id PK
+        varchar(100) name UK
+        varchar(63) slug UK
+        boolean is_active
+    }
+
+    ARTICLE["content_article · статья"]:::content {
+        bigint id PK
+        bigint author_id FK "автор"
+        timestamptz created_at
+        timestamptz deleted_at "null: мягкое удаление"
+    }
+
+    ARTICLE_VERSION["content_articleversion · редакция"]:::content {
+        bigint id PK
+        bigint article_id FK
+        integer version_number "уникален в рамках статьи"
+        bigint semester_discipline_id FK
+        bigint material_type_id FK
+        varchar(300) title
+        varchar(16) status "draft, pending, published, rejected, archived"
+        bigint created_by_id FK
+        timestamptz published_at "null: дата публикации"
+        bigint reviewed_by_id FK "null: модератор"
+    }
+
+    FILE_ATTACHMENT["content_fileattachment · файл"]:::content {
+        bigint id PK
+        bigint version_id FK
+        bigint uploaded_by_id FK
+        varchar(255) original_name
+        bigint size_bytes
+    }
+
+    COMMENT["content_comment · комментарий"]:::content {
+        bigint id PK
+        bigint article_id FK
+        bigint author_id FK
+        bigint parent_id FK "null: ответ на комментарий"
+        varchar(16) status "pending, published, rejected, hidden"
+    }
+
+    MODERATION_EVENT["moderation_moderationevent · событие модерации"]:::moderation {
+        bigint id PK
+        bigint moderator_id FK
+        bigint article_version_id FK "null: объект - редакция"
+        bigint comment_id FK "null: объект - комментарий"
+        varchar(32) action "approve, reject, hide, return_for_revision"
+    }
+
+    REPORT["moderation_report · жалоба"]:::moderation {
+        bigint id PK
+        bigint reporter_id FK
+        bigint article_id FK "null: жалоба на статью"
+        bigint comment_id FK "null: жалоба на комментарий"
+        varchar(16) status "new, in_review, resolved, rejected"
+        bigint assigned_to_id FK "null: исполнитель"
+        timestamptz resolved_at "null: дата решения"
+    }
+
+    FEEDBACK_MESSAGE["moderation_feedbackmessage · обращение"]:::moderation {
+        bigint id PK
+        bigint user_id FK "автор обращения"
+        varchar(255) subject
+        varchar(16) status "new, in_progress, answered, closed"
+        bigint assigned_to_id FK "null: ответственный"
+        timestamptz answered_at "null: дата ответа"
+    }
+
+    NOTIFICATION["notifications_notification · уведомление"]:::notifications {
+        bigint id PK
+        bigint user_id FK "получатель"
+        varchar(32) type "тип события"
+        varchar(255) title
+        boolean is_read
+        timestamptz read_at "null: дата прочтения"
+    }
+
+    AUDIT_LOG["notifications_auditlog · журнал действий"]:::notifications {
+        bigint id PK
+        bigint actor_id FK "null: система"
+        varchar(32) action "тип действия"
+        varchar(100) object_type
+        varchar(64) object_id
+        jsonb details "подробности"
+    }
+
+    USER ||--o| PROFILE : "1:1 профиль"
+    USER ||--o{ EXTERNAL_ACCOUNT : "внешние аккаунты"
+    PROFILE ||--o{ PROFILE_LINK : "ссылки"
+
+    SEMESTER ||--o{ SEMESTER_DISCIPLINE : "семестр"
+    DISCIPLINE ||--o{ SEMESTER_DISCIPLINE : "дисциплина"
+    SEMESTER_DISCIPLINE ||--o{ ARTICLE_VERSION : "каталог"
+    MATERIAL_TYPE ||--o{ ARTICLE_VERSION : "тип материала"
+
+    USER ||--o{ ARTICLE : "автор"
+    USER ||--o{ ARTICLE_VERSION : "автор редакции"
+    USER |o--o{ ARTICLE_VERSION : "проверяющий"
+    ARTICLE ||--|{ ARTICLE_VERSION : "редакции"
+    ARTICLE_VERSION ||--o{ FILE_ATTACHMENT : "вложения"
+    USER ||--o{ FILE_ATTACHMENT : "загрузил"
+    ARTICLE ||--o{ COMMENT : "комментарии"
+    USER ||--o{ COMMENT : "автор комментария"
+    COMMENT |o--o{ COMMENT : "ответы"
+
+    USER ||--o{ MODERATION_EVENT : "модератор"
+    ARTICLE_VERSION ||--o{ MODERATION_EVENT : "проверка редакции"
+    COMMENT ||--o{ MODERATION_EVENT : "проверка комментария"
+
+    USER ||--o{ REPORT : "заявитель"
+    USER |o--o{ REPORT : "исполнитель"
+    ARTICLE ||--o{ REPORT : "жалобы на статью"
+    COMMENT ||--o{ REPORT : "жалобы на комментарий"
+
+    USER ||--o{ FEEDBACK_MESSAGE : "обращения"
+    USER |o--o{ FEEDBACK_MESSAGE : "ответственный"
+    USER ||--o{ NOTIFICATION : "уведомления"
+    USER |o--o{ AUDIT_LOG : "действия персонала"
+
+    classDef accounts fill:#e8f0fe,stroke:#4a6fb5,stroke-width:1.5px,color:#1f2933
+    classDef catalog fill:#e6f4ea,stroke:#3f8f5a,stroke-width:1.5px,color:#1f2933
+    classDef content fill:#fff4e5,stroke:#b5762a,stroke-width:1.5px,color:#1f2933
+    classDef moderation fill:#fde8e8,stroke:#b04a4a,stroke-width:1.5px,color:#1f2933
+    classDef notifications fill:#f1ecfd,stroke:#6a4fb5,stroke-width:1.5px,color:#1f2933

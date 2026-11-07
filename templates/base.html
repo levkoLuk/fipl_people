@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}FIPL People{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="{% url 'home' %}">🏠 Главная</a>
+            <a href="{% url 'about' %}">ℹ️ О проекте</a>
+            <a href="{% url 'catalog:catalog_home' %}">📚 Каталог</a>
+            <a href="/admin/">⚙️ Админка</a>
+        </nav>
+        <form action="{% url 'catalog:search' %}" method="get" class="search-form">
+            <input type="text" name="q" placeholder="Поиск дисциплины..." value="{{ request.GET.q|default:'' }}">
+            <button type="submit">🔍</button>
+        </form>
+    </header>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>© 2026 FIPL People — Платформа для студентов ФИПЛ НГУ</p>
+    </footer>
+</body>
+</html>

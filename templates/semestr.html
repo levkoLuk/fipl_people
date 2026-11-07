@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Семестры — FIPL People{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{% url 'catalog:catalog_home' %}">Каталог</a> → Семестры
+</div>
+
+<div class="hero">
+    <h1>Выберите семестр</h1>
+    <p>Материалы структурированы по семестрам обучения</p>
+</div>
+
+<div class="cards">
+    {% for semester in semesters %}
+    <div class="card semester-card">
+        <h3>{{ semester.name }}</h3>
+        <p>{{ semester.description|default:"Материалы семестра" }}</p>
+    </div>
+    {% empty %}
+    <div class="no-results">
+        <p>Семестры ещё не добавлены. Добавьте их через админ-панель.</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

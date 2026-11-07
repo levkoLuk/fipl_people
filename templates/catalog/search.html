@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск — FIPL People{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Результаты поиска</h1>
+    {% if query %}
+    <p>По запросу: <strong>{{ query }}</strong></p>
+    {% endif %}
+</div>
+
+<div class="no-results">
+    <h2>Поиск пока не настроен</h2>
+    <p>Здесь будут отображаться результаты поиска по дисциплинам</p>
+    <p><a href="{% url 'catalog:disciplines_list' %}">Посмотреть все дисциплины</a></p>
+</div>
+{% endblock %}

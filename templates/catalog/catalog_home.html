@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Каталог — FIPL People{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <h1>Учебный каталог</h1>
+    <p>Выберите удобный способ навигации</p>
+</div>
+
+<div class="catalog-choices">
+    <a href="{% url 'catalog:semesters_list' %}" class="choice-card">
+        <div class="icon"></div>
+        <h2>По семестрам</h2>
+        <p>Найти материалы по номеру семестра</p>
+    </a>
+    <a href="{% url 'catalog:disciplines_list' %}" class="choice-card">
+        <div class="icon"></div>
+        <h2>По дисциплинам</h2>
+        <p>Найти материалы по названию предмета</p>
+    </a>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Дисциплина — FIPL People{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{% url 'catalog:catalog_home' %}">Каталог</a> →
+    <a href="{% url 'catalog:disciplines_list' %}">Дисциплины</a> →
+    Дисциплина
+</div>
+
+<div class="hero">
+    <h1>Дисциплина</h1>
+    <p>Учебные материалы по дисциплине</p>
+</div>
+
+<h2>Разделы материалов</h2>
+<div class="sections-grid">
+    <div class="section-card">
+        <div class="icon">📖</div>
+        <h3>Лекции</h3>
+        <p>Конспекты и записи лекций</p>
+    </div>
+    <div class="section-card">
+        <div class="icon">✏️</div>
+        <h3>Семинары</h3>
+        <p>Материалы семинарских занятий</p>
+    </div>
+    <div class="section-card">
+        <div class="icon">📝</div>
+        <h3>Контрольные работы</h3>
+        <p>Варианты и решения контрольных</p>
+    </div>
+    <div class="section-card">
+        <div class="icon">🎓</div>
+        <h3>Экзамен</h3>
+        <p>Билеты, вопросы и подготовка к экзамену</p>
+    </div>
+    <div class="section-card">
+        <div class="icon">💬</div>
+        <h3>Мнение о преподавателе</h3>
+        <p>Отзывы студентов о преподавателях</p>
+    </div>
+    <div class="section-card">
+        <div class="icon">📁</div>
+        <h3>Прочее</h3>
+        <p>Дополнительные материалы</p>
+    </div>
+    <div class="section-card">
+        <div class="icon"></div>
+        <h3>Литература</h3>
+        <p>Учебники, пособия и рекомендуемая литература</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Семестры — FIPL People{% endblock %}
+
+{% block content %}
+<div class="breadcrumb">
+    <a href="{% url 'catalog:catalog_home' %}">Каталог</a> → Семестры
+</div>
+
+<div class="hero">
+    <h1>Выберите семестр</h1>
+    <p>Материалы структурированы по семестрам обучения</p>
+</div>
+
+<div class="cards">
+    <div class="card">
+        <h3>1 семестр</h3>
+        <p>Материалы первого семестра</p>
+    </div>
+    <div class="card">
+        <h3>2 семестр</h3>
+        <p>Материалы второго семестра</p>
+    </div>
+    <div class="card">
+        <h3>3 семестр</h3>
+        <p>Материалы третьего семестра</p>
+    </div>
+    <div class="card">
+        <h3>4 семестр</h3>
+        <p>Материалы четвертого семестра</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,372 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* Шапка сайта */
+header {
+    background: linear-gradient(135deg, #0066CC 0%, #0052a3 100%);
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 20px rgba(0, 102, 204, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header nav {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+header nav a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+}
+
+/* Форма поиска */
+.search-form {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.search-form input {
+    padding: 0.8rem 1.5rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 25px;
+    width: 400px;
+    font-size: 1rem;
+    outline: none;
+    background: rgba(255, 255, 255, 0.95);
+    transition: all 0.3s;
+}
+
+.search-form input:focus {
+    border-color: white;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    width: 450px;
+}
+
+.search-form input::placeholder {
+    color: #666;
+}
+
+.search-form button {
+    background: #00a8e8;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+    font-weight: 600;
+}
+
+.search-form button:hover {
+    background: #0097d1;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 168, 232, 0.4);
+}
+
+/* Основной контент */
+main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Hero секция */
+.hero {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%);
+    padding: 4rem 3rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 30px rgba(0, 102, 204, 0.15);
+    text-align: center;
+    margin-bottom: 3rem;
+    border: 1px solid rgba(0, 102, 204, 0.1);
+}
+
+.hero h1 {
+    font-size: 3rem;
+    color: #0066CC;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 102, 204, 0.1);
+}
+
+.hero p {
+    font-size: 1.3rem;
+    color: #555;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Карточки выбора */
+.catalog-choices {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    margin: 2rem 0;
+    flex-wrap: wrap;
+}
+
+.choice-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+    padding: 3rem 4rem;
+    border-radius: 20px;
+    box-shadow: 0 8px 25px rgba(0, 102, 204, 0.12);
+    text-align: center;
+    text-decoration: none;
+    color: #333;
+    transition: all 0.3s;
+    min-width: 300px;
+    border: 2px solid rgba(0, 102, 204, 0.1);
+}
+
+.choice-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 102, 204, 0.25);
+    border-color: #0066CC;
+}
+
+.choice-card .icon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.choice-card h2 {
+    color: #0066CC;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.choice-card p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+/* Сетка карточек */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.1);
+    transition: all 0.3s;
+    border: 1px solid rgba(0, 102, 204, 0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(0, 102, 204, 0.2);
+    border-color: #0066CC;
+}
+
+.card h3 {
+    color: #0066CC;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.card p {
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Ссылка на дисциплину */
+.discipline-link {
+    text-decoration: none;
+    color: inherit;
+}
+
+.discipline-link:hover h3 {
+    color: #00a8e8;
+}
+
+/* Сетка секций */
+.sections-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.section-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f5faff 100%);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.1);
+    text-align: center;
+    transition: all 0.3s;
+    border: 2px solid rgba(0, 102, 204, 0.1);
+}
+
+.section-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 12px 35px rgba(0, 102, 204, 0.25);
+    border-color: #0066CC;
+}
+
+.section-card .icon {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-card h3 {
+    color: #0066CC;
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+}
+
+.section-card p {
+    color: #666;
+    font-size: 1rem;
+}
+
+/* Хлебные крошки */
+.breadcrumb {
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(0, 102, 204, 0.05);
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.breadcrumb a {
+    color: #0066CC;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: #00a8e8;
+    text-decoration: underline;
+}
+
+/* Нет результатов */
+.no-results {
+    text-align: center;
+    padding: 4rem;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 6px 20px rgba(0, 102, 204, 0.1);
+    margin: 2rem 0;
+}
+
+.no-results h2 {
+    color: #0066CC;
+    margin-bottom: 1rem;
+}
+
+.no-results p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.no-results a {
+    color: #0066CC;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.no-results a:hover {
+    text-decoration: underline;
+}
+
+/* Подвал */
+footer {
+    background: linear-gradient(135deg, #0066CC 0%, #0052a3 100%);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+    box-shadow: 0 -4px 20px rgba(0, 102, 204, 0.2);
+}
+
+footer p {
+    font-size: 1rem;
+    opacity: 0.95;
+}
+
+/* Заголовки */
+h1 {
+    color: #0066CC;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    color: #0066CC;
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    header nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-form input {
+        width: 250px;
+    }
+    
+    .search-form input:focus {
+        width: 280px;
+    }
+    
+    .hero h1 {
+        font-size: 2rem;
+    }
+    
+    .choice-card {
+        padding: 2rem;
+        min-width: 250px;
+    }
+    
+    .cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .sections-grid {
+        grid-template-columns: 1fr;
+    }
+}

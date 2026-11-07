@@ -1,0 +1,4 @@
+# Зависимости серверной части FIPLPEOPLE.RU.
+Django==5.2.19
+psycopg[binary]==3.3.8
+Pillow==12.3.0
